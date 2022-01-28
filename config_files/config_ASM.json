@@ -1,0 +1,42 @@
+{
+    "data":{
+        "image_shape":[128,128],
+        "dataset_name": "fashion_mnist",
+        "dataset_dir":"DATASET",
+        "mask_path":""
+    },
+    "forward_model":{
+        "number_snapshots":1,
+        "tipo_muestreo":"ASM",
+        "wavelength":635e-9,
+        "pixel_size":8e-6,
+        "distance_sensor":25.4e-3,
+        "normalize_measurements":false,
+        "snr":50
+    },
+    "training":{
+        "results_folder":"results/ASM_fashion",
+        "batch_size":5,
+        "number_epochs":50,
+        "learning_rate":1e-3,
+        "loss_init_weight":1e-5,
+        "loss_recons_weight":0.99999,
+        "weights_path":"last_weights.h5",
+        "data_augmentation":false
+    },
+    "unet_params":{
+      "conv_k_size":3,
+      "list_n_filters":[16, 32, 64, 128, 128],
+      "alpha":0.5,
+      "padding":"same",
+      "mp_size":2,
+      "mp_stride":2,
+      "up_size":2,
+      "up_stride":2
+    },
+    "other":{
+        "p":6,
+        "k_size":5,
+        "n_iterations":15
+    }
+}

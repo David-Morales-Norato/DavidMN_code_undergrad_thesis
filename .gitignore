@@ -2,7 +2,9 @@
 __pycache__/
 *.py[cod]
 *$py.class
-
+images_test
+.vscode
+results*
 # C extensions
 *.so
 
