@@ -19,11 +19,11 @@ class Muestreo(tf.keras.layers.Layer):
     def build(self, input_shape):
         super(Muestreo, self).build(input_shape)
         self.S = input_shape
-        Masks_ang = tf.random.uniform((1,self.L, *self.S[1:-1]))#*0.35*np.pi#-np.pi
+        Masks_ang = tf.random.uniform((1,self.L, *self.S[1:-1]))*2*np.pi-np.pi
         Masks_ang = tf.cast(Masks_ang, dtype=self.float_dtype)
         if self.codificate == True:
           self.Masks_weights = self.add_weight(name='Masks', shape=[1,self.L, *self.S[1:-1]], initializer=tf.keras.initializers.Constant(Masks_ang), trainable=False)
-        else: 
+        else:
           self.Masks_weights = self.add_weight(name='Masks', shape=[1,self.L, *self.S[1:-1]], initializer=tf.keras.initializers.Constant(tf.ones(shape = Masks_ang.shape, dtype = Masks_ang.dtype)), trainable=False)
         
         if self.tipo_muestreo =="FRAN":
@@ -55,8 +55,8 @@ class Muestreo(tf.keras.layers.Layer):
 
     def call(self, input):
         input = tf.cast(input, dtype=self.float_dtype)
-        real, imag = tf.unstack(input, num=2, axis=3)
-        self.Masks = tf.multiply(tf.ones(tf.shape(self.Masks_weights), dtype=self.complex_dtype), tf.math.exp(tf.multiply(tf.cast(shape = self.Masks_weights, dtype = self.complex_dtype) , tf.constant(1j, dtype=self.complex_dtype))))
+        real, imag = tf.unstack(input, num=2, axis=-1)
+        self.Masks = tf.multiply(tf.ones(tf.shape(self.Masks_weights), dtype=self.complex_dtype), tf.math.exp(tf.multiply(tf.cast(self.Masks_weights, dtype = self.complex_dtype) , tf.constant(1j, dtype=self.complex_dtype))))
         Z = tf.complex(real, imag)
         Z = tf.expand_dims(Z,1)
         Y = self.A(Z, self.Masks)

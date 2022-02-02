@@ -1,0 +1,29 @@
+{
+    "asm":{
+        "number_snapshots":1,
+        "tipo_muestreo":"ASM",
+        "wavelength":635e-9,
+        "pixel_size":8e-6,
+        "distance_sensor":25.4e-3,
+        "normalize_measurements":true,
+        "snr":null
+    },
+    "fresnel":{
+        "number_snapshots":1,
+        "tipo_muestreo":"FRESNEL",
+        "wavelength":635e-9,
+        "pixel_size":8e-6,
+        "distance_sensor":25.4e-3,
+        "normalize_measurements":true,
+        "snr":null
+    },
+    "fran":{
+        "number_snapshots":1,
+        "tipo_muestreo":"FRAN",
+        "wavelength":null,
+        "pixel_size":null,
+        "distance_sensor":null,
+        "normalize_measurements":true,
+        "snr":null
+    }
+}

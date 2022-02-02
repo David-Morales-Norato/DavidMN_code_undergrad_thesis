@@ -156,9 +156,7 @@ plot_image(tf.math.real(Z)[0,0], os.path.join(RESULTS_FOLDER, "init_real.png"))
 plot_image(tf.math.imag(Z)[0,0], os.path.join(RESULTS_FOLDER, "init_imag.png"))
 plot_image(tf.math.abs(Z)[0,0], os.path.join(RESULTS_FOLDER, "init_abs.png"))
 plot_image(tf.math.angle(Z)[0,0], os.path.join(RESULTS_FOLDER, "init_angle.png"))
-plot_image(kernel_real, os.path.join(RESULTS_FOLDER, "kernel_real.png"))
-plot_image(kernel_imag, os.path.join(RESULTS_FOLDER, "kernel_imag.png"))
-
-
+plot_image(kernel_real[...,0,0], os.path.join(RESULTS_FOLDER, "kernel_real.png"))
+plot_image(kernel_imag[...,0,0], os.path.join(RESULTS_FOLDER, "kernel_imag.png"))
 print("The code ran successfully")
 
