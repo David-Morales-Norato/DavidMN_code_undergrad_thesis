@@ -45,7 +45,7 @@ class Muestreo(tf.keras.layers.Layer):
           X = np.arange(-self.S[1]//2, self.S[1]//2)
           Y = np.arange(-self.S[2]//2, self.S[2]//2)
           X, Y = np.meshgrid(X,Y)
-          THOR = (X**2 + Y**2)*self.dx
+          THOR = ((X**2 + Y**2)**(1/2))*self.dx
           Q1 = np.exp(-1j*(np.pi/self.wave_length/self.distance)*THOR**2)
           self.Q = tf.broadcast_to(tf.convert_to_tensor(Q1, dtype=self.complex_dtype), (1, 1, *self.Masks_weights.shape[-2:]))
           self.var_de_interes = self.Q

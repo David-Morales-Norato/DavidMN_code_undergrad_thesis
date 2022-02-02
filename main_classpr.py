@@ -120,14 +120,14 @@ def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p
     modelo_class.fit(x = train_dataset, validation_data=val_dataset, epochs=epochs, callbacks = callbacks, verbose=1)
 
 if __name__ == "__main__":
-    datasets_name = ["fashion_mnist"]#["fashion_mnist", "mnist"]
+    datasets_name = ["fashion_mnist", "mnist"]
     num_classes = 10
-    model_types = ["none"]#["none", "back", "fsi"]
-    classifiers = ["mobilnetv2"]
-    batch_size = 5
-    epochs = 5
+    model_types = ["none", "back", "fsi"]
+    classifiers = ["mobilnet", "xception", "inception"]
+    batch_size = 2
+    epochs = 3
     lr = 1e-3
-    shape = [128, 128]
+    shape = [32, 32]
     p_value = 6
     k_size = 5
     n_iter = 3

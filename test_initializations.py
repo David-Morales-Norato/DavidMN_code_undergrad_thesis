@@ -94,7 +94,7 @@ Acquisition Layer definition
 '''
 muestreo_layer = Muestreo(snapshots = SNAPSHOTS, wave_length = WAVE_LENGTH, 
                 dx = DX,distance = DISTANCE_SENSOR, tipo_muestreo = TIPO_MUESTREO, 
-                normalize_measurements = NORMALIZE_MEASUREMENTS, 
+                normalize_measurements = NORMALIZE_MEASUREMENTS, codificate = True,
                 float_dtype = FLOAT_DTYPE, complex_dtype=COMPLEX_DTYPE, name="Muestreo")
 
 

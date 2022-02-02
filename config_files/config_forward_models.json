@@ -3,7 +3,7 @@
         "number_snapshots":1,
         "tipo_muestreo":"ASM",
         "wavelength":635e-9,
-        "pixel_size":8e-6,
+        "pixel_size":16e-6,
         "distance_sensor":25.4e-3,
         "normalize_measurements":true,
         "snr":null
@@ -12,8 +12,8 @@
         "number_snapshots":1,
         "tipo_muestreo":"FRESNEL",
         "wavelength":635e-9,
-        "pixel_size":8e-6,
-        "distance_sensor":25.4e-3,
+        "pixel_size":16e-6,
+        "distance_sensor":7e-2,
         "normalize_measurements":true,
         "snr":null
     },

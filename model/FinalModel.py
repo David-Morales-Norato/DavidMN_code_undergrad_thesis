@@ -29,8 +29,16 @@ class CLAS_PR(tf.keras.Model):
                 normalize_measurements = normalize_measurements, 
                 float_dtype = float_dtype, complex_dtype=complex_dtype, codificate = False, name="Muestreo")
 
-        if clasification_network == "mobilnetv2":
+        if clasification_network == "mobilnet":
             self.classification_network = tf.keras.applications.MobileNetV2(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
+            self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
+
+        if clasification_network == "xception":
+            self.classification_network = tf.keras.applications.Xception(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
+            self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
+
+        if clasification_network == "inception":
+            self.classification_network = tf.keras.applications.InceptionV3(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
             self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
         #self.ruido = customGaussian(snr = snr)
 
@@ -62,8 +70,16 @@ class CLAS_PR_BACK(tf.keras.Model):
                 normalize_measurements = normalize_measurements, 
                 float_dtype = float_dtype, complex_dtype=complex_dtype, name="Muestreo")
 
-        if clasification_network == "mobilnetv2":
+        if clasification_network == "mobilnet":
             self.classification_network = tf.keras.applications.MobileNetV2(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
+            self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
+
+        if clasification_network == "xception":
+            self.classification_network = tf.keras.applications.Xception(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
+            self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
+
+        if clasification_network == "inception":
+            self.classification_network = tf.keras.applications.InceptionV3(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
             self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
         #self.ruido = customGaussian(snr = snr)
         self.backpropagation_layer  = BackPropagationLayer(tipo_muestreo = tipo_muestreo, complex_dtype = complex_dtype, name = "BackPropagationLayer")
@@ -111,9 +127,18 @@ class CLAS_PR_INIT(tf.keras.Model):
 
         self.init_initialzation = FSI_Initial(p = p, float_dtype=float_dtype,complex_dtype=complex_dtype, name = "init_initialzation")
         self.Initialation = FSI_cell(p = p, k_size = k_size, tipo_muestreo = tipo_muestreo,float_dtype=float_dtype,complex_dtype=complex_dtype,  train_initialization = False, name = "initialization_cell")
-        if clasification_network == "mobilnetv2":
+        if clasification_network == "mobilnet":
             self.classification_network = tf.keras.applications.MobileNetV2(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
             self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
+
+        if clasification_network == "xception":
+            self.classification_network = tf.keras.applications.Xception(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
+            self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
+
+        if clasification_network == "inception":
+            self.classification_network = tf.keras.applications.InceptionV3(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
+            self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
+
         #self.ruido = customGaussian(snr = snr)
 
     def build(self, input_shape):
