@@ -31,14 +31,14 @@ def plot_predictions(x_image, y_pred, medidas, init, y_true, num_plots = 5):
   conf_matrix = medidas
   fig = plt.figure(figsize=(30, 20))
   for indx_plot in range(num_plots):
-    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 1); plt.imshow(x_abs[indx_plot, ...]); plt.xticks([]); plt.yticks([]); plt.title("x_abs")
-    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 2); plt.imshow(x_angle[indx_plot, ...]); plt.xticks([]); plt.yticks([]); plt.title("x_angle")
-    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 3); plt.imshow(medidas[indx_plot, ...]); plt.xticks([]); plt.yticks([]); plt.title("medidas, etiqueta: " + str(y_true.numpy()[indx_plot, ...]) + ", predicción " + str(y_pred.numpy()[indx_plot, ...]))
-    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 4); plt.imshow(conf_matrix[indx_plot, ...]); plt.xticks([]); plt.yticks([]); plt.title("Matrix de confusión")
+    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 1); plt.imshow(tf.squeeze(x_abs[indx_plot, ...])); plt.xticks([]); plt.yticks([]); plt.title("x_abs")
+    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 2); plt.imshow(tf.squeeze(x_angle[indx_plot, ...])); plt.xticks([]); plt.yticks([]); plt.title("x_angle")
+    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 3); plt.imshow(tf.squeeze(medidas[indx_plot, ...])); plt.xticks([]); plt.yticks([]); plt.title("medidas, etiqueta: " + str(y_true.numpy()[indx_plot, ...]) + ", predicción " + str(y_pred.numpy()[indx_plot, ...]))
+    plt.subplot(num_plots, n_figs, n_figs*indx_plot + 4); plt.imshow(tf.squeeze(conf_matrix[indx_plot, ...])); plt.xticks([]); plt.yticks([]); plt.title("Matrix de confusión")
     if init is not None:
       init_abs, init_angle = init
-      plt.subplot(num_plots, n_figs, n_figs*indx_plot + 5); plt.imshow(init_abs[indx_plot, ...]); plt.xticks([]); plt.yticks([]); plt.title("init_abs")
-      plt.subplot(num_plots, n_figs, n_figs*indx_plot + 6); plt.imshow(init_angle[indx_plot, ...]); plt.xticks([]); plt.yticks([]); plt.title("init_angle")
+      plt.subplot(num_plots, n_figs, n_figs*indx_plot + 5); plt.imshow(tf.squeeze(init_abs[indx_plot, ...])); plt.xticks([]); plt.yticks([]); plt.title("init_abs")
+      plt.subplot(num_plots, n_figs, n_figs*indx_plot + 6); plt.imshow(tf.squeeze(init_angle[indx_plot, ...])); plt.xticks([]); plt.yticks([]); plt.title("init_angle")
 
   return fig
   

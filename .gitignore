@@ -4,7 +4,7 @@ __pycache__/
 *$py.class
 images_test
 .vscode
-results*
+results/
 # C extensions
 *.so
 

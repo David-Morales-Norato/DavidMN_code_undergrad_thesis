@@ -1,12 +1,12 @@
 {
     "data":{
-        "image_shape":[128,128],
+        "image_shape":[64,64],
         "dataset_name": "fashion_mnist",
         "num_classes":10
     },
     "forward_model":{
         "number_snapshots":1,
-        "tipo_muestreo":"ASM",
+        "tipo_muestreo":"FRESNEL",
         "wavelength":635e-9,
         "pixel_size":16e-6,
         "distance_sensor":25.4e-3,

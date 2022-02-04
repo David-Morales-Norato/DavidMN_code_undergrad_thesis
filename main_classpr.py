@@ -7,6 +7,7 @@ from model.FinalModel import CLAS_PR, CLAS_PR_BACK, CLAS_PR_INIT
 from utils.callbacks import log_predictions
 import tensorflow as tf
 import tensorflow_addons as tfa
+import pandas as pd
 import numpy as np
 import json
 import sys
@@ -26,8 +27,23 @@ def read_config(config_file):
         raise Exception("Config file not found: "+ config_file)
     return asm_params, fresnel_params, fran_params
 
-def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = False):
+def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = False, set_gpu = None):
     # other
+    if set_gpu is not None:
+        gpus = tf.config.list_physical_devices('GPU')
+        if gpus:
+            # Restrict TensorFlow to only allocate 1GB of memory on the first GPU
+            try:
+                tf.config.set_logical_device_configuration(
+                    gpus[0],
+                    [tf.config.LogicalDeviceConfiguration(memory_limit=int(set_gpu))])
+                logical_gpus = tf.config.list_logical_devices('GPU')
+                print(len(gpus), "Physical GPUs,", len(logical_gpus), "Logical GPUs")
+            except RuntimeError as e:
+                # Virtual devices must be set before GPUs have been initialized
+                print(e)
+
+
     float_dtype =  "float32"
     complex_dtype =  "complex64"
 
@@ -117,30 +133,36 @@ def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p
     '''
     opti = tf.keras.optimizers.Adam(amsgrad = True, learning_rate = lr)
     modelo_class.compile(optimizer = opti, loss = "categorical_crossentropy", metrics = ["categorical_crossentropy", tf.keras.metrics.Recall(name = "recall_1"), tf.keras.metrics.Precision(name = "precision_1"), tfa.metrics.F1Score(num_classes=num_classes, threshold=0.5, average = "macro")])
-    modelo_class.fit(x = train_dataset, validation_data=val_dataset, epochs=epochs, callbacks = callbacks, verbose=1)
+    history = modelo_class.fit(x = train_dataset, validation_data=val_dataset, epochs=epochs, callbacks = callbacks, verbose=1)
+
+    df = pd.DataFrame.from_dict(history.history)
+    df.to_csv(os.path.join(results_folder, "history.csv"), index = False)
 
 if __name__ == "__main__":
-    datasets_name = ["fashion_mnist", "mnist"]
+    #os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
+
+    #datasets_name = ["fashion_mnist", "mnist"]
     num_classes = 10
-    model_types = ["none", "back", "fsi"]
+    model_types = ["fsi", "none", "back"]
     classifiers = ["mobilnet", "xception", "inception"]
-    batch_size = 2
-    epochs = 3
+    batch_size = 128
+    epochs = 100
     lr = 1e-3
-    shape = [32, 32]
+    shape = [128, 128]
     p_value = 6
     k_size = 5
-    n_iter = 3
+    n_iter = 15
     results_folder = "results"
 
     config_file = sys.argv[-1]
+    dataset_name = sys.argv[-2]
     asm_params, fresnel_params, fran_params = read_config(config_file)
 
     for forward_params in [asm_params, fresnel_params, fran_params]:
         for model_type in model_types:
             for clasification_network in classifiers:
-                for dataset_name in datasets_name:
-                    print("##########################################")
-                    print("RUNING EXP", forward_params["tipo_muestreo"], model_type, clasification_network, dataset_name)
-                    main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = True)
-                    print("##########################################")
+
+                print("##########################################")
+                print("RUNING EXP", forward_params["tipo_muestreo"], model_type, clasification_network, dataset_name)
+                main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = False, set_gpu = 10*1024)
+                print("##########################################")

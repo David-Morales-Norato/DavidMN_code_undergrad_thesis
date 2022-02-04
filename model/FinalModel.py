@@ -126,7 +126,7 @@ class CLAS_PR_INIT(tf.keras.Model):
                 float_dtype = float_dtype, complex_dtype=complex_dtype, name="Muestreo")
 
         self.init_initialzation = FSI_Initial(p = p, float_dtype=float_dtype,complex_dtype=complex_dtype, name = "init_initialzation")
-        self.Initialation = FSI_cell(p = p, k_size = k_size, tipo_muestreo = tipo_muestreo,float_dtype=float_dtype,complex_dtype=complex_dtype,  train_initialization = False, name = "initialization_cell")
+        self.Initialation = FSI_cell(p = p, k_size = k_size, tipo_muestreo = tipo_muestreo,float_dtype=float_dtype,complex_dtype=complex_dtype,  train_initialization = True, name = "initialization_cell")
         if clasification_network == "mobilnet":
             self.classification_network = tf.keras.applications.MobileNetV2(input_shape=(*shape,3), classes=num_classes, weights=None, classifier_activation="softmax")
             self.conv_initial = tf.keras.layers.Conv2D(3, 3, padding="same", activation = None, name = "ConvInitial")
