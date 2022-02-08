@@ -2,30 +2,18 @@
 import the necessary packages
 '''
 
-from utils.dataio import get_dataset
+from pyexpat import model
+from utils.dataio import get_dataset, read_config
 from model.FinalModel import CLAS_PR, CLAS_PR_BACK, CLAS_PR_INIT
 from utils.callbacks import log_predictions
 import tensorflow as tf
 import tensorflow_addons as tfa
 import pandas as pd
-import numpy as np
-import json
 import sys
 import os
 
 
-def read_config(config_file):
 
-    if os.path.exists(config_file):
-        print("opening config file")
-        with open(config_file) as json_file:
-            params = json.load(json_file)
-            asm_params, fresnel_params, fran_params = params["asm"], params["fresnel"], params["fran"]
-    else:
-        print("Config file", config_file)
-        print("actual path", os.getcwd())
-        raise Exception("Config file not found: "+ config_file)
-    return asm_params, fresnel_params, fran_params
 
 def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = False, set_gpu = None):
     # other
@@ -67,10 +55,11 @@ def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p
         os.makedirs(tensorboard_path)
 
     if (dataset_name == "mnist" or dataset_name == "fashion_mnist"):
-        train_dataset, val_dataset = get_dataset(dataset_name, shape = shape, batch_size = batch_size, num_classes = 10, complex_dtype=complex_dtype)
+        train_dataset, val_dataset, test_dataset = get_dataset(dataset_name, shape = shape, batch_size = batch_size, num_classes = 10, complex_dtype=complex_dtype)
         if cut_dataset == True:
             train_dataset = train_dataset.take(10)
             val_dataset = val_dataset.take(10)
+            test_dataset = test_dataset.take(10)
     else:
         raise Exception("invalid type dataset")
 
@@ -133,10 +122,18 @@ def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p
     '''
     opti = tf.keras.optimizers.Adam(amsgrad = True, learning_rate = lr)
     modelo_class.compile(optimizer = opti, loss = "categorical_crossentropy", metrics = ["categorical_crossentropy", tf.keras.metrics.Recall(name = "recall_1"), tf.keras.metrics.Precision(name = "precision_1"), tfa.metrics.F1Score(num_classes=num_classes, threshold=0.5, average = "macro")])
-    history = modelo_class.fit(x = train_dataset, validation_data=val_dataset, epochs=epochs, callbacks = callbacks, verbose=1)
+    history = modelo_class.fit(x = train_dataset, validation_data=val_dataset, epochs=epochs, callbacks = callbacks, verbose=1, batch_size=batch_size)
 
     df = pd.DataFrame.from_dict(history.history)
     df.to_csv(os.path.join(results_folder, "history.csv"), index = False)
+
+    modelo_class.load_weights(WEIGHTS_PATH)
+    evaluatation_results = [modelo_class.evaluate(test_dataset)]
+    
+    df = pd.DataFrame(evaluatation_results)
+    df.to_csv(os.path.join(results_folder, "test.csv"), index = False, header =modelo_class.metrics_names)
+
+
 
 if __name__ == "__main__":
     #os.environ['CUDA_VISIBLE_DEVICES'] = '-1'
@@ -144,11 +141,11 @@ if __name__ == "__main__":
     #datasets_name = ["fashion_mnist", "mnist"]
     num_classes = 10
     model_types = ["fsi", "none", "back"]
-    classifiers = ["mobilnet", "xception", "inception"]
-    batch_size = 128
-    epochs = 100
+    classifiers = ["mobilnet"]#["mobilnet", "xception", "inception"]
+    batch_size = 5
+    epochs = 3
     lr = 1e-3
-    shape = [128, 128]
+    shape = [32, 32]
     p_value = 6
     k_size = 5
     n_iter = 15
@@ -161,8 +158,7 @@ if __name__ == "__main__":
     for forward_params in [asm_params, fresnel_params, fran_params]:
         for model_type in model_types:
             for clasification_network in classifiers:
-
                 print("##########################################")
                 print("RUNING EXP", forward_params["tipo_muestreo"], model_type, clasification_network, dataset_name)
-                main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = False, set_gpu = 10*1024)
+                main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = True, set_gpu = 10*1024)
                 print("##########################################")
