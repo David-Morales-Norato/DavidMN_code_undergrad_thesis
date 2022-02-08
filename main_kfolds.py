@@ -118,7 +118,7 @@ def main_kfolds(dataset_name, num_classes, model_type, batch_size, epochs, lr, s
         training loop
         '''
         opti = tf.keras.optimizers.Adam(amsgrad = True, learning_rate = lr)
-        modelo_class.compile(optimizer = opti, loss = "categorical_crossentropy", metrics = ["categorical_crossentropy", tf.keras.metrics.Recall(name = "recall_1"), tf.keras.metrics.Precision(name = "precision_1"), tfa.metrics.F1Score(num_classes=num_classes, threshold=0.5, average = "macro")])
+        modelo_class.compile(optimizer = opti, loss = "categorical_crossentropy", metrics = ["accuracy", tf.keras.metrics.Recall(name = "recall_1"), tf.keras.metrics.Precision(name = "precision_1"), tfa.metrics.F1Score(num_classes=num_classes, threshold=0.5, average = "macro")])
         history = modelo_class.fit(x = train_dataset, validation_data=val_dataset, epochs=epochs, callbacks = callbacks, verbose=1, batch_size=batch_size)
 
         df = pd.DataFrame.from_dict(history.history)
@@ -139,7 +139,7 @@ if __name__ == "__main__":
     model_types = ["fsi", "none", "back"]
     classifier = "mobilnet"#["mobilnet", "xception", "inception"]
     batch_size = 6
-    epochs = 10
+    epochs = 1
     lr = 1e-3
     shape = [32, 32]
     p_value = 6

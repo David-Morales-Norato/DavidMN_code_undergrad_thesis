@@ -121,7 +121,7 @@ def main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p
     training loop
     '''
     opti = tf.keras.optimizers.Adam(amsgrad = True, learning_rate = lr)
-    modelo_class.compile(optimizer = opti, loss = "categorical_crossentropy", metrics = ["categorical_crossentropy", tf.keras.metrics.Recall(name = "recall_1"), tf.keras.metrics.Precision(name = "precision_1"), tfa.metrics.F1Score(num_classes=num_classes, threshold=0.5, average = "macro")])
+    modelo_class.compile(optimizer = opti, loss = "categorical_crossentropy", metrics = ["accuracy", tf.keras.metrics.Recall(name = "recall_1"), tf.keras.metrics.Precision(name = "precision_1"), tfa.metrics.F1Score(num_classes=num_classes, threshold=0.5, average = "macro")])
     history = modelo_class.fit(x = train_dataset, validation_data=val_dataset, epochs=epochs, callbacks = callbacks, verbose=1, batch_size=batch_size)
 
     df = pd.DataFrame.from_dict(history.history)
@@ -141,15 +141,15 @@ if __name__ == "__main__":
     #datasets_name = ["fashion_mnist", "mnist"]
     num_classes = 10
     model_types = ["fsi", "none", "back"]
-    classifiers = ["mobilnet"]#["mobilnet", "xception", "inception"]
+    classifiers = ["mobilnet", "xception", "inception"]
     batch_size = 5
-    epochs = 3
+    epochs = 1
     lr = 1e-3
-    shape = [32, 32]
+    shape = [128, 128]
     p_value = 6
     k_size = 5
     n_iter = 15
-    results_folder = "results"
+    results_folder = "results_main"
 
     config_file = sys.argv[-1]
     dataset_name = sys.argv[-2]
@@ -160,5 +160,5 @@ if __name__ == "__main__":
             for clasification_network in classifiers:
                 print("##########################################")
                 print("RUNING EXP", forward_params["tipo_muestreo"], model_type, clasification_network, dataset_name)
-                main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = True, set_gpu = 10*1024)
+                main(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = True, set_gpu = None)
                 print("##########################################")
