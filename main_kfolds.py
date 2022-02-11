@@ -8,7 +8,7 @@ import sys
 import os
 
 
-def main_kfolds(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder, forward_params, cut_dataset = False, set_gpu = None, k_folds = 10):
+def main_kfolds(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, clasification_network, results_folder_root, forward_params, cut_dataset = False, set_gpu = None, k_folds = 10):
     # other
     if set_gpu is not None:
         gpus = tf.config.list_physical_devices('GPU')
@@ -44,13 +44,7 @@ def main_kfolds(dataset_name, num_classes, model_type, batch_size, epochs, lr, s
     
 
     if (dataset_name == "mnist" or dataset_name == "fashion_mnist"):
-        train_list_datasets, val_list_datasets, test_dataset = get_kfolds_dataset(dataset_name, shape = shape, batch_size = batch_size, num_classes = 10, complex_dtype=complex_dtype, kfolds = k_folds)
-
-        if cut_dataset == True:
-            for indx_dataset, (train_ds, val_ds) in enumerate(zip(train_list_datasets, val_list_datasets)):
-                train_list_datasets[indx_dataset] = train_ds.take(10)
-                val_list_datasets[indx_dataset] = val_ds.take(10)
-            test_dataset = test_dataset.take(10)
+        datasets = get_kfolds_dataset(dataset_name, shape = shape, batch_size = batch_size, num_classes = 10, complex_dtype=complex_dtype, kfolds = k_folds)
     else:
         raise Exception("invalid type dataset")
 
@@ -84,8 +78,17 @@ def main_kfolds(dataset_name, num_classes, model_type, batch_size, epochs, lr, s
         raise Exception("invalid model type")
 
     print(modelo_class.summary())
-    for indx_dataset, (train_dataset, val_dataset) in enumerate(zip(train_list_datasets, val_list_datasets)):
-        results_folder =  os.path.join(results_folder, TIPO_MUESTREO,  model_type, clasification_network, dataset_name, "fold_" + str(indx_dataset))
+    for indx_dataset, (dataset) in enumerate(datasets):
+        train_dataset, val_dataset, test_dataset = dataset
+
+        if cut_dataset == True:
+            train_dataset = train_dataset.take(10)
+            val_dataset = val_dataset.take(10)
+            test_dataset = test_dataset.take(10)
+
+
+        
+        results_folder =  os.path.join(results_folder_root, TIPO_MUESTREO,  model_type, clasification_network, dataset_name, "fold_" + str(indx_dataset))
         tensorboard_path = os.path.join(results_folder, "tensorboard")
         WEIGHTS_PATH =  os.path.join(results_folder, "checkpoint.h5")
         if not os.path.exists(tensorboard_path):
@@ -136,12 +139,12 @@ if __name__ == "__main__":
 
     #datasets_name = ["fashion_mnist", "mnist"]
     num_classes = 10
-    model_types = ["fsi", "none", "back"]
-    classifier = "mobilnet"#["mobilnet", "xception", "inception"]
+    model_types = ["none"]
+    classifiers = ["mobilnet"]
     batch_size = 6
     epochs = 1
     lr = 1e-3
-    shape = [32, 32]
+    shape = [128, 128]
     p_value = 6
     k_size = 5
     n_iter = 15
@@ -149,11 +152,12 @@ if __name__ == "__main__":
 
     config_file = sys.argv[-1]
     dataset_name = sys.argv[-2]
-    asm_params, _, _ = read_config(config_file)
+    asm_params, fresnel_params, fran_params = read_config(config_file)
 
-    for model_type in model_types:
-
-        print("##########################################")
-        print("RUNING EXP", asm_params["tipo_muestreo"], model_type, classifier, dataset_name)
-        main_kfolds(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, classifier, results_folder, asm_params, cut_dataset = True, set_gpu = 10*1024)
-        print("##########################################")
+    for forward_params in [asm_params]:
+        for model_type in model_types:
+            for classifier in classifiers:
+                print("##########################################")
+                print("RUNING EXP", asm_params["tipo_muestreo"], model_type, classifier, dataset_name)
+                main_kfolds(dataset_name, num_classes, model_type, batch_size, epochs, lr, shape, p_value, k_size, n_iter, classifier, results_folder, asm_params, cut_dataset = True, set_gpu = None)
+                print("##########################################")

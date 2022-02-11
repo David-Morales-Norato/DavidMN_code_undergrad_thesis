@@ -85,12 +85,12 @@ def get_kfolds_dataset(dataset_name, shape, num_classes, batch_size, complex_dty
         val_images = val_images.shuffle(len(ds_train))
         val_images = val_images.prefetch(tf.data.AUTOTUNE)
         #val_images = val_images.batch(batch_size)
-
-        train_k_datasets.append(train_images)
-        val_k_datasets.append(val_images)
+        yield train_images, val_images, test_images
+    #     train_k_datasets.append(train_images)
+    #     val_k_datasets.append(val_images)
     
-    return train_k_datasets, val_k_datasets, test_images
-
+    # return train_k_datasets, val_k_datasets, test_images
+    
 def read_config(config_file):
 
     if os.path.exists(config_file):
@@ -106,8 +106,9 @@ def read_config(config_file):
 
 
 if __name__ == "__main__":
-    train_k_datasets, val_k_datasets, test_images = get_kfolds_dataset("mnist", [32, 32], 10, 5, complex_dtype = tf.complex128, kfolds = 10)
+    datasets = get_kfolds_dataset("mnist", [32, 32], 10, 5, complex_dtype = tf.complex128, kfolds = 10)
 
-    for train_ds, val_ds in zip(train_k_datasets, val_k_datasets):
+    for indx_dataset, (dataset) in enumerate(datasets):
+        train_dataset, val_dataset, test_dataset = dataset
 
-        print(len(train_ds), len(val_ds))
+        print("asd")

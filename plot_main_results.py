@@ -14,15 +14,8 @@ if __name__ == '__main__':
     forward_models = ["ASM", "FRESNEL", "FRAN"]
     datasets = ["mnist", "fashion_mnist"]
     metrics = ["accuracy", "f1_score"]
-    batch_size = 5
-    epochs = 3
-    lr = 1e-3
-    shape = [32, 32]
-    p_value = 6
-    k_size = 5
-    n_iter = 15
-    results_folder_root = "results_main"
-
+    results_folder_root = "results_kfold"
+    ext = ".svg"
 
     
     results_total = np.zeros((len(metrics), len(datasets), len(classifiers), len(model_types), len(forward_models)))
@@ -38,7 +31,7 @@ if __name__ == '__main__':
     results_total = np.random.rand(len(metrics), len(datasets), len(classifiers), len(model_types), len(forward_models))
     for indx_metrics, metric in enumerate(metrics):
         #fig = plt.figure(figsize=(30, 10))
-        fig, axs = plt.subplots(len(datasets), len(classifiers), constrained_layout=False, sharey=False, sharex = False, figsize=(30, 10))
+        fig, axs = plt.subplots(len(datasets), len(classifiers), constrained_layout=False, sharey=False, sharex = False, figsize=(20, 10))
         fig.suptitle(metric.capitalize(), fontsize=16)
         for indx_datasets, dataset in enumerate(datasets):
             for indx_classifiers, clasification_network in enumerate(classifiers):
@@ -60,5 +53,7 @@ if __name__ == '__main__':
         #fig.clim(0, 1)
         #fig.tight_layout()
         #plt.draw()
+        plt.savefig(os.path.join(results_folder_root, "test_result_" + metric + ext))
+    #plt.show()
 
-    plt.show()
+    

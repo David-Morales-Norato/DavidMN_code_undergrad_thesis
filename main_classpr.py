@@ -141,7 +141,7 @@ if __name__ == "__main__":
     #datasets_name = ["fashion_mnist", "mnist"]
     num_classes = 10
     model_types = ["fsi", "none", "back"]
-    classifiers = ["mobilnet", "xception", "inception"]
+    classifiers = ["mobilnet" "inception"]
     batch_size = 5
     epochs = 1
     lr = 1e-3
