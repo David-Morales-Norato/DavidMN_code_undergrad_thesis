@@ -25,8 +25,9 @@ the dataset parameter could be `mnist` or `fashion_mnist`
 
 ## Example:
 
+```{r, engine='bash', count_lines}
 python main_classpr.py mnist config_files/config_forward_models.json 
-
+```
 
 ## Config file
 
