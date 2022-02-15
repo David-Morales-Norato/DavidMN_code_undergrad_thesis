@@ -11,6 +11,8 @@ Code implementation of the experiments used in my undergrad thesis titled: "Algo
 
 * Python 3.9
 * tensorflow-gpu 2.6
+* tensorflow-datasets 4.5.2
+* tensorflow-addons 0.15.0
 * matplotlib
 * pandas
 * opencv
